@@ -8,6 +8,8 @@ import {
 } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Linking from 'expo-linking';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import {
   getSignInUrl,
   handleCallback,
@@ -34,6 +36,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const storeUser = useMutation(api.users.store);
 
   // Load stored session on mount
   useEffect(() => {
@@ -70,6 +73,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       try {
         const newUser = await handleCallback(code);
+        await storeUser({
+          id: newUser.id,
+          email: newUser.email,
+          firstName: newUser.firstName ?? undefined,
+          lastName: newUser.lastName ?? undefined,
+          profilePictureUrl: newUser.profilePictureUrl ?? undefined,
+        });
         setUser(newUser);
       } catch (err) {
         console.error('Auth callback failed:', err);
@@ -119,6 +129,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('[Auth] Exchanging code for tokens...');
       const newUser = await handleCallback(code);
       console.log('[Auth] Got user:', newUser.email);
+      await storeUser({
+        id: newUser.id,
+        email: newUser.email,
+        firstName: newUser.firstName ?? undefined,
+        lastName: newUser.lastName ?? undefined,
+        profilePictureUrl: newUser.profilePictureUrl ?? undefined,
+      });
       setUser(newUser);
       return { success: true };
     } catch (error) {

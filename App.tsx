@@ -14,6 +14,7 @@ import { Account } from './src/components/Account';
 import { SignInButton } from './src/components/SignInButton';
 import { Footer } from './src/components/Footer';
 import { AuthProvider } from './src/context/AuthContext';
+import { ConvexClientProvider } from './src/context/ConvexClientProvider';
 import type { ViewType } from './src/types';
 
 // Custom theme with WorkOS purple accent
@@ -69,9 +70,11 @@ export default function App(): React.JSX.Element {
   return (
     <SafeAreaProvider>
       <PaperProvider theme={theme}>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
+        <ConvexClientProvider>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </ConvexClientProvider>
       </PaperProvider>
     </SafeAreaProvider>
   );
