@@ -81,6 +81,8 @@ install();
 2. The `react-native-quick-crypto` polyfill requires native code compilation
 
 ```bash
+# Convex
+npx convex dev
 # iOS
 npx expo run:ios
 
